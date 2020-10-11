@@ -92,7 +92,10 @@ class MyApp(Tk):
         Tk.__init__(self, *args, **kwargs)
         self.title("CMYK Önizleyici - Daka Etiket")
         self.geometry("450x380")
-        self.iconphoto(False, PhotoImage(file=resource_path('img/daka_logo.png')))
+        try:
+            self.iconphoto(False, PhotoImage(file=resource_path('img/daka_logo.png')))
+        except Exception as e:
+            print(type(e), e)
 
         menu_bar = Menu(self)
         self.config(menu=menu_bar)
