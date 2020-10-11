@@ -1,3 +1,4 @@
+import os
 import time
 from tkinter import filedialog
 from tkinter import *
@@ -75,12 +76,23 @@ class MyImage:
         return Image.fromarray(cmyk.astype(np.uint8), mode="CMYK")
 
 
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+        print("resource_path:", os.path.join(base_path, relative_path))
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
+
 class MyApp(Tk):
     def __init__(self, *args, **kwargs):
         Tk.__init__(self, *args, **kwargs)
         self.title("CMYK Önizleyici - Daka Etiket")
         self.geometry("450x380")
-        self.iconphoto(False, PhotoImage(file='img/daka_logo.png'))
+        self.iconphoto(False, PhotoImage(file=resource_path('img/daka_logo.png')))
 
         menu_bar = Menu(self)
         self.config(menu=menu_bar)
@@ -97,7 +109,7 @@ class MyApp(Tk):
         self.last_update = None
         self._old_geo = None
         self.screen_image = None
-        self.open_file("img/daka_bg.png")
+        self.open_file(resource_path("img/daka_bg.png"))
 
         self.image_tk = None
         self.image_frame = Frame(self)
@@ -115,7 +127,7 @@ class MyApp(Tk):
         if not filepath:
             filepath = filedialog.askopenfilename(
                 title="Dosya seç",
-                filetypes=(("Resim dosyaları", ("*.jpg",)), ("Bütün dosyalar", "*.*"))
+                filetypes=(("Resim dosyaları", ("*.jpg", "*.png",)), ("Bütün dosyalar", "*.*"))
             )
         if filepath:
             self.image = MyImage(filepath, maxsize=(self.winfo_screenwidth(), self.winfo_screenheight()))
